@@ -8,7 +8,7 @@ import os
 import numpy as np
 import time
 import datetime
-from pygame import mixer
+from pygame import mixer #mp3 dosya oynatmak için
 
 #pi kamera aktif
 os.system('sudo modprobe bcm2835-v4l2')
@@ -22,8 +22,6 @@ os.system('sudo modprobe bcm2835-v4l2')
 
 #dataset.py degiskenleri
 face_detector = cv2.CascadeClassifier('haarcascade_frontalface_default.xml')
-#global face_id
-
 
 #face_recognition degiskenleri
 recognizer = cv2.face.createLBPHFaceRecognizer()
@@ -32,8 +30,7 @@ cascadePath = "haarcascade_frontalface_default.xml"
 faceCascade = cv2.CascadeClassifier(cascadePath);
 font = cv2.FONT_HERSHEY_SIMPLEX
 
-#training.py degiskenleri
-
+#Kayit Ekrani
 class OtherWindow(QMainWindow):
     def __init__(self):
         QMainWindow.__init__(self)
@@ -99,28 +96,24 @@ class OtherWindow(QMainWindow):
         cap = cv2.VideoCapture(0)
         count = 0
         while(True):
-            # Capture frame-by-frame
+            #frame yakala
             ret, frame = cap.read()
 
-            # Our operations on the frame come here
+            # gri skala (görüntü isleme icin)
             gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
-
             faces = face_detector.detectMultiScale(gray, 1.3, 5)
 
             for (x,y,w,h) in faces:
+                cv2.rectangle(frame, (x,y), (x+w,y+h), (255,0,0), 2)    
 
-                # Crop the image frame into rectangle
-                cv2.rectangle(frame, (x,y), (x+w,y+h), (255,0,0), 2)
-                
-                # Increment sample face image
+                # face_id numara/indexi
                 count += 1
 
-                # Save the captured image into the datasets folder
+                # yakalanan face frameleri dataset'e kaydet
                 cv2.imwrite("dataset/User." + str(face_id) + '.' + str(count) + ".jpg", gray[y:y+h,x:x+w])
 
-
             cv2.imshow('frame', frame)
-            # Display the resulting frame
+            # her frame yakalandiginda belirt
             if cv2.waitKey(100) & 0xFF == ord('q'):
                 break
 
@@ -137,22 +130,17 @@ class OtherWindow(QMainWindow):
         user_music_type = cb.currentText()
         sign_up_date = datetime.datetime.now() 
 
-        # write permission : append(a) -> dosyanin ustune yazar
+        # write permission : append(a) -> dosyanin devamina yazar
         cloud_content = user_name + "\t\t" + user_sName + "\t\t" + user_id + "\t\t" + user_music_type + "\t\t" + sign_up_date.strftime("%Y-%m-%d %H:%M") + "\n"
         cloudFile = open("userInfoForCloud.txt", "a")
         cloudFile.write(cloud_content)
         
         reply = QMessageBox.question(self, 'Message', "Kayıt Eklendi", QMessageBox.Ok)
-
-        """ -> bu blok crontab haline gelecek -> update every 1min
-        time.sleep(1)
-        #upload to dbox
-        os.system('python cloud_dropbox.py userInfoForCloud.txt /droptest.txt')
-        """
         
     def iptalMethod(self):
-        reply = QMessageBox.question(self, 'Message', "gibi gibi", QMessageBox.Ok)
+        reply = QMessageBox.question(self, 'Message', "exit method", QMessageBox.Ok)
 
+#Ana Ekran
 class mainWindow(QMainWindow):
     def __init__(self):
         QMainWindow.__init__(self)
@@ -205,33 +193,30 @@ class mainWindow(QMainWindow):
         """
     def kayitlarBtn(self):
 
-        #reply = QMessageBox.question(self, 'Message', "LookPlay sizi görecek, yüzünüzü sabit tutun. Arada bir çok hafif sağa sola bakın.", QMessageBox.Ok)
+        #tanilama arayuz
         cam = cv2.VideoCapture(0)
         while True:
-            # Read the video frame
+            # frame oku
             ret, im =cam.read()
 
-            # Convert the captured frame into grayscale
+            # > gri skala 
             gray = cv2.cvtColor(im,cv2.COLOR_BGR2GRAY)
 
-            # Get all face from the video frame
+            # ekranda beliren yuz
             faces = faceCascade.detectMultiScale(gray, 1.2,5)
 
-            # For each face in faces
             for(x,y,w,h) in faces:
 
-                # Create rectangle around the face
                 cv2.rectangle(im, (x-20,y-20), (x+w+20,y+h+20), (0,255,0), 4)
 
-                # Recognize the face belongs to which ID
+                # ekrandaki yuzun hangi id'ye ait oldugu..
                 Id,conf = recognizer.predict(gray[y:y+h,x:x+w])
 
-                # Check the ID if exist 
+                # id var ise 
                 if(Id == 4):
+                    #demo muzik caldirma
                     Id = "Yusuf"
                     path_name = os.path.splitext("/musics/(caz)BOB  ACRI - Sleep Away.mp3")[0]
-                    #reply = QMessageBox.question(self, 'Message', "͔͔͔♪♫♬ Çalma Listesinden ♪♫♬ ͕͕͕ " + path_name, QMessageBox.Ok)
-                    #time.sleep(2)
                     mixer.init()
                     mixer.music.load('/home/pi/LookPlayIoTProject/musics/(pop)Aleyna Tilki - Sen Olsan Bari.mp3')
                     mixer.music.set_volume(1.0)
@@ -242,54 +227,23 @@ class mainWindow(QMainWindow):
                     Id = "Recep"
                 elif(Id == 5):
                     Id = "Kayhan"
-                #If not exist, then it is Unknown
                 else:
                     Id = "Unknown"
                     
-                # Put text describe who is in the picture
+                # cercevede yazacak yazi icin
                 cv2.rectangle(im, (x-22,y-90), (x+w+22, y-22), (0,255,0), -1)
                 cv2.putText(im, str(Id), (x,y-40), font, 2, (255,255,255), 3)
 
-            # Display the video frame with the bounded rectangle
             cv2.imshow('im',im) 
 
-            # If 'q' is pressed, close program
+            # q > quit()
             if cv2.waitKey(10) & 0xFF == ord('q'):
                 break
 
     def kayitsilBtn(self):
 
-        cap = cv2.VideoCapture(0)
-        count = 0
-        while(True):
-            # Capture frame-by-frame
-            ret, frame = cap.read()
-
-            # Our operations on the frame come here
-            gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
-
-            faces = face_detector.detectMultiScale(gray, 1.3, 5)
-
-            for (x,y,w,h) in faces:
-
-                # Crop the image frame into rectangle
-                cv2.rectangle(frame, (x,y), (x+w,y+h), (255,0,0), 2)
-                
-                # Increment sample face image
-                count += 1
-
-                # Save the captured image into the datasets folder
-                cv2.imwrite("dataset/User." + str(face_id) + '.' + str(count) + ".jpg", gray[y:y+h,x:x+w])
-
-
-            cv2.imshow('frame', frame)
-            # Display the resulting frame
-            if cv2.waitKey(100) & 0xFF == ord('q'):
-                break
-
-            elif count>50:
-                break
-
+        reply = QMessageBox.question(self, 'Message', "LookPlay sizi görecek, yüzünüzü sabit tutun. Arada bir çok hafif sağa sola bakın.", QMessageBox.Ok)
+        
     def calmalistesiBtn(self):
         
         reply = QMessageBox.question(self, 'Message', "LookPlay sizi görecek, yüzünüzü sabit tutun. Arada bir çok hafif sağa sola bakın.", QMessageBox.Ok)
