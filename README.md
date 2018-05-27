@@ -16,13 +16,16 @@ Kontrol işleminde dosyanın kayıt sürelerine bakılır, iki kayıt arasında 
 * Tanılama arayüzünde optimizasyon
 * Veritabanı. Projede kullanıcılar ve müzikler demo olarak sunulmaktadır. Kullanıcı kaydı esnasında her yeni yüz için face_id bir artırılarak yeni kullanıcı yüzü datasete eklenir.
 Tanılama ekranında basit bir if sorgusuyla face_id'si mevcut olan kullanıcının yüzünü çerçeveye alır ve bu if sorgusu altında bir müzik verisi varsa bunu çalar.
+* Kameradan görüntü alınan pencerenin kapanmasıyla ilgili sorun mevcut.
 
-## Projede Ne Kullandık?
+## Projede Ne Kullandık? Ne Kurmalı?
 * Görüntü işleme için -> OpenCV2 - [Rehber](https://www.pyimagesearch.com/2016/04/18/install-guide-raspberry-pi-3-raspbian-jessie-opencv-3/)
 * Görüntü almak için -> Picamera 
 * Bulut Hizmeti -> Dropbox - [Public Project File](https://www.dropbox.com/developers/apps/info/kqchkl1olkzsxec)
 * PyQt5 arayüz kütüphanesi
-*
+* Crontab oluşturmak için 'uploadToDbox_yedek.sh' bash betiğini <code>sudo crontab -e</code> ile yeni bir göreve atayabilirsiniz.
+Crontab işlemi ile sorun yaşandığı takdirde betik, proje dizininde <code>sudo ./uploadToDbox_yedek.sh</code> komutu ile çalıştırılabilir. Komutun çalıştığı satırda başka bir işlem yapmamanız gerekir.
+* Proje raporu: [Rapor](link)
 
 # English
 ## To be added later.
