@@ -24,7 +24,7 @@ Tanılama ekranında basit bir if sorgusuyla face_id'si mevcut olan kullanıcın
 * Bulut Hizmeti -> Dropbox - [Public Project File](https://www.dropbox.com/developers/apps/info/kqchkl1olkzsxec)
 * PyQt5 arayüz kütüphanesi
 * Crontab oluşturmak için 'uploadToDbox_yedek.sh' bash betiğini <code>sudo crontab -e</code> ile yeni bir göreve atayabilirsiniz.
-Crontab işlemi ile sorun yaşandığı takdirde betik, proje dizininde <code>sudo ./uploadToDbox_yedek.sh</code> komutu ile çalıştırılabilir. Komutun çalıştığı satırda başka bir işlem yapmamanız gerekir.
+Crontab işlemi ile sorun yaşandığı takdirde betik, proje dizininde <code>sudo ./uploadToDbox.sh</code> komutu ile çalıştırılabilir. Komutun çalıştığı satırda başka bir işlem yapmamanız gerekir.
 * Proje raporu: [Rapor](https://www.dropbox.com/s/1ml2f2jsa9y1wru/iotrapor_lookplay.pdf?dl=0)
 
 ## Özet Olarak İşleyiş
